@@ -114,6 +114,7 @@ main section {
 .movie-container.noBackground {
   background: none;
   box-shadow: none;
+  align-items: center;
 }
 
 footer {
