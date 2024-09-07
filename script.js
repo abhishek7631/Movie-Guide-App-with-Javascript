@@ -3,23 +3,31 @@ const movieContainer = document.querySelector(".movie-container");
 const inputBox = document.querySelector(".inputBox");
 
 const getMovieInfo = async (movie) => {
-  const MyAPIKey = "6248bbd0";
-  const url = `http://www.omdbapi.com/?apikey=${MyAPIKey}&t=${movie}`;
+  try {
+    const MyAPIKey = "6248bbd0";
+    const url = `http://www.omdbapi.com/?apikey=${MyAPIKey}&t=${movie}`;
 
-  const response = await fetch(url);
-  const data = await response.json();
-  //   console.log(data);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Unable to fetch movie data.");
+    }
+    const data = await response.json();
+    //   console.log(data);
 
-  showMovieData(data);
+    showMovieData(data);
+  } catch {
+    showErrorMessage("No Movie Found!!");
+  }
 };
 
 const showMovieData = (data) => {
   movieContainer.innerHTML = "";
+  movieContainer.classList.remove("noBackground");
   const { Title, imdbRating, Genre, Released, Runtime, Actors, Plot, Poster } =
     data;
 
   const movieElement = document.createElement("div");
-  //   movieGenreElement.classList.add("movie-info");
+  movieElement.classList.add("movie-info");
   movieElement.innerHTML = `<h2>${Title}</h2>
   <p><strong>Rating: &#11088</strong>${imdbRating}</p>`;
 
@@ -47,12 +55,19 @@ const showMovieData = (data) => {
   movieContainer.appendChild(movieElement);
 };
 
+const showErrorMessage = (msg) => {
+  movieContainer.innerHTML = `<h2>${msg}</h2>`;
+  movieContainer.classList.add("noBackground");
+};
+
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const movieName = inputBox.value.trim();
   if (movieName !== "") {
     getMovieInfo(movieName);
+  } else {
+    showErrorMessage("Enter movie name to get movie information");
   }
   //   console.log(inputBox.value);
 });
